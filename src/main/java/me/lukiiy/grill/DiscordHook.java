@@ -1,6 +1,5 @@
 package me.lukiiy.grill;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -9,10 +8,19 @@ import java.net.http.HttpResponse;
 public class DiscordHook {
     private static final String WEBHOOK_BASE = "https://discord.com/api/webhooks/";
 
+    private final HttpClient client = HttpClient.newHttpClient();
     public final URI webhookURL;
 
     public DiscordHook(String id, String token) {
         this.webhookURL = URI.create(WEBHOOK_BASE + id + "/" + token);
+
+        try {
+            HttpResponse<String> response = client.send(HttpRequest.newBuilder().uri(webhookURL).GET().build(), HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) throw new IllegalArgumentException("Invalid webhook (" + response.statusCode() + ")");
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to validate webhook", e);
+        }
     }
 
     public void sendMessage(String message) {
@@ -24,7 +32,7 @@ public class DiscordHook {
         HttpResponse<String> response = null;
 
         try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
             Grill.getInstance().getLogger().severe("Discord Webhook error: " + e.getMessage());
         }
