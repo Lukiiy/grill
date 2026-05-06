@@ -1,0 +1,9 @@
+name: grill
+description: $description
+version: '${version}'
+
+main: me.lukiiy.grill.Grill
+api-version: '26.1.2'
+load: POSTWORLD
+
+authors: [ Lukiiy ]
