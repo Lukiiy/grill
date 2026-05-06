@@ -29,6 +29,17 @@ public class DiscordHook {
         sendWebhook("{\"content\":\"" + escapeJson(message) + "\"}", message);
     }
 
+    public void sendSimpleEmbed(String title, String message) {
+        if (title == null || title.isBlank() || message == null || message.isBlank()) return;
+
+        // triple quoted because i hate formatting this
+        String json = """
+            {"embeds": [{"title": "%s", "description": "%s"}]}
+        """.formatted(escapeJson(title), escapeJson(message));
+
+        sendWebhook(json, title + ": " + message);
+    }
+
     private void sendWebhook(String json, String logMsg) {
         HttpRequest request = HttpRequest.newBuilder().uri(webhookURL)
                 .header("Content-Type", "application/json")
