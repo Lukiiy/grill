@@ -3,6 +3,7 @@ package me.lukiiy.grill;
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,12 +20,12 @@ public class Listen implements Listener {
         switch (p.getLastDeathLocation().getWorld().getEnvironment()) {
             case NORMAL -> dim = "Overworld";
             case NETHER -> dim = "Nether";
-            case THE_END -> dim = "End";
+            case THE_END -> dim = "The End";
             default -> dim = "Custom";
         }
 
-        Component msg = Component.text("Você morreu em " + loc.blockX() + " " + loc.blockY() + " " + loc.blockZ() + " no " + dim).color(TextColor.color(0xff527a));
+        String msg = Grill.getInstance().getConfig().getString("msg", "").replace("%x", loc.blockX() + "").replace("%y", loc.blockY() + "").replace("%z", loc.blockZ() + "").replace("%d", dim);
 
-        p.sendMessage(msg);
+        p.sendMessage(MiniMessage.miniMessage().deserialize(msg));
     }
 }
