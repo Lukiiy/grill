@@ -24,6 +24,8 @@ public class DiscordHook {
     }
 
     public void sendMessage(String message) {
+        if (message == null || message.isBlank()) return;
+
         HttpRequest request = HttpRequest.newBuilder().uri(webhookURL)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{\"content\":\"" + message + "\"}"))

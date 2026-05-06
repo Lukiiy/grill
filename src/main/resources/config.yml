@@ -1,1 +1,8 @@
 deathRecordMsg: "\n<c:#ff527a>☠ Você morreu em <b>%x %y %z</b> no <i>%d</i>!</c:#ff527a>\n"
+dcWebhook:
+  id: ""
+  token: ""
+  start: ":green_heart: O servidor **abriu** :)"
+  stop: ":broken_heart: O servidor **fechou** :("
+  join: "%p entrou no servidor."
+  leave: "%p saiu do servidor."
