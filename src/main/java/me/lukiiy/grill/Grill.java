@@ -11,7 +11,13 @@ public final class Grill extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new Listen(), this);
 
-        discordHook = new DiscordHook(getConfig().getString("dcwebhook.id"), getConfig().getString("dcwebhook.token"));
+        try {
+            discordHook = new DiscordHook(getConfig().getString("dcwebhook.id"), getConfig().getString("dcwebhook.token"));
+        } catch (Exception e) {
+            discordHook = null;
+
+            getLogger().warning("Discord webhook disabled: " + e.getMessage());
+        }
     }
 
     @Override
