@@ -1,9 +1,8 @@
 package me.lukiiy.grill;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.TextColor;
+import io.papermc.paper.chat.ChatRenderer;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
@@ -14,6 +13,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class Listen implements Listener {
+    private final ChatRenderer chatRenderer = new GrillChatRenderer();
+
     @EventHandler
     public void join(PlayerJoinEvent e) {
         DiscordHook hook = Grill.getInstance().getDiscordHook();
@@ -45,5 +46,10 @@ public class Listen implements Listener {
         String msg = Grill.getInstance().getConfig().getString("deathRecordMsg", "").replace("%x", loc.blockX() + "").replace("%y", loc.blockY() + "").replace("%z", loc.blockZ() + "").replace("%d", dim);
 
         p.sendMessage(MiniMessage.miniMessage().deserialize(msg));
+    }
+
+    @EventHandler
+    public void chat(AsyncChatEvent e) {
+        e.renderer(chatRenderer);
     }
 }
