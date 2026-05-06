@@ -2,14 +2,32 @@ package me.lukiiy.grill;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class Listen implements Listener {
+    @EventHandler
+    public void join(PlayerJoinEvent e) {
+        DiscordHook hook = Grill.getInstance().getDiscordHook();
+
+        if (hook != null) hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.join", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(e.getPlayer().displayName())));
+    }
+
+    @EventHandler
+    public void quit(PlayerQuitEvent e) {
+        DiscordHook hook = Grill.getInstance().getDiscordHook();
+
+        if (hook != null) hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.leave", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(e.getPlayer().displayName())));
+    }
+
     @EventHandler
     public void respawn(PlayerPostRespawnEvent e) {
         Player p = e.getPlayer();
