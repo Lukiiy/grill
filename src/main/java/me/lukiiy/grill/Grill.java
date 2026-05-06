@@ -11,4 +11,10 @@ public final class Grill extends JavaPlugin {
     public static Grill getInstance() {
         return JavaPlugin.getPlugin(Grill.class);
     }
+
+    public void setupConfig() {
+        saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+    }
 }
