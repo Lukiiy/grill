@@ -24,7 +24,7 @@ public class Listen implements Listener {
             default -> dim = "Custom";
         }
 
-        String msg = Grill.getInstance().getConfig().getString("msg", "").replace("%x", loc.blockX() + "").replace("%y", loc.blockY() + "").replace("%z", loc.blockZ() + "").replace("%d", dim);
+        String msg = Grill.getInstance().getConfig().getString("deathRecordMsg", "").replace("%x", loc.blockX() + "").replace("%y", loc.blockY() + "").replace("%z", loc.blockZ() + "").replace("%d", dim);
 
         p.sendMessage(MiniMessage.miniMessage().deserialize(msg));
     }

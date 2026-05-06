@@ -1,1 +1,1 @@
-msg: "\n<c:#ff527a>☠ Você morreu em <b>%x %y %z</b> no <i>%d</i>!</c:#ff527a>\n"
+deathRecordMsg: "\n<c:#ff527a>☠ Você morreu em <b>%x %y %z</b> no <i>%d</i>!</c:#ff527a>\n"
