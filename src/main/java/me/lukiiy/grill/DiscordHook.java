@@ -26,19 +26,25 @@ public class DiscordHook {
     public void sendMessage(String message) {
         if (message == null || message.isBlank()) return;
 
+        sendWebhook("{\"content\":\"" + escapeJson(message) + "\"}", message);
+    }
+
+    private void sendWebhook(String json, String logMsg) {
         HttpRequest request = HttpRequest.newBuilder().uri(webhookURL)
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString("{\"content\":\"" + message + "\"}"))
+                .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
 
-        HttpResponse<String> response = null;
-
         try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            Grill.getInstance().getLogger().info("[Discord Webhook (" + response.statusCode() + ")] " + logMsg);
         } catch (Exception e) {
             Grill.getInstance().getLogger().severe("Discord Webhook error: " + e.getMessage());
         }
+    }
 
-        Grill.getInstance().getLogger().info("[Discord Webhook (" + response.statusCode() + ")] " + message);
+    private String escapeJson(String input) {
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
     }
 }
