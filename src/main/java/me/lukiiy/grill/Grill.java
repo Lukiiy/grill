@@ -32,7 +32,7 @@ public final class Grill extends JavaPlugin {
 
     private void setupDiscordWebhook() {
         try {
-            discordHook = new DiscordHook(getConfig().getString("dcwebhook.id"), getConfig().getString("dcwebhook.token"));
+            discordHook = new DiscordHook(getConfig().getString("dcWebhook.id"), getConfig().getString("dcWebhook.token"));
         } catch (Exception e) {
             discordHook = null;
 
