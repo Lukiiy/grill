@@ -6,9 +6,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.object.ObjectContents;
 import org.bukkit.entity.Player;
 
-public class GrillChatRenderer implements ChatRenderer {
+public final class GrillChatRenderer implements ChatRenderer {
     @Override
     public Component render(Player source, Component sourceDisplayName, Component message, Audience viewer) {
-        return Component.translatable("chat.type.text", Component.empty().append(Component.object(ObjectContents.playerHead(source.getPlayerProfile()))).appendSpace().append(sourceDisplayName), message);
+        Component displayName = sourceDisplayName;
+
+        if (viewer instanceof Player) displayName = Component.empty().append(Component.object(ObjectContents.playerHead(source.getPlayerProfile()))).append(Component.text(" ")).append(sourceDisplayName);
+
+        return Component.translatable("chat.type.text", displayName, message);
     }
 }
