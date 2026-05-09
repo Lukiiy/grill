@@ -17,9 +17,12 @@ public class Listen implements Listener {
 
     @EventHandler
     public void join(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
         DiscordHook hook = Grill.getInstance().getDiscordHook();
 
         if (hook != null) hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.join", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(e.getPlayer().displayName())));
+
+        player.sendMessage(MiniMessage.miniMessage().deserialize(Grill.getInstance().getConfig().getString("welcomeMsg", "")));
     }
 
     @EventHandler

@@ -1,4 +1,4 @@
-deathRecordMsg: "\n<c:#ff527a>☠ Você morreu em <b>%x %y %z</b> no <i>%d</i>!</c:#ff527a>\n"
+deathRecordMsg: "\n<c:#ff527a><c:#ffc252>[!]</c:#ffc252> Você morreu em <c:#ff7552><b>%x %y %z</b></c:#ff7552> no <c:#ff7552><i>%d</i></c:#ff7552>!</c:#ff527a>\n"
 dcWebhook:
   id: ""
   token: ""
@@ -6,3 +6,4 @@ dcWebhook:
   stop: ":broken_heart: O servidor **fechou** :("
   join: "%p entrou no servidor."
   leave: "%p saiu do servidor."
+welcomeMsg: "<rainbow>Seja bem vindo(a) ao servidor!</rainbow>"
