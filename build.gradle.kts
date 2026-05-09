@@ -34,3 +34,7 @@ tasks {
         filesMatching("paper-plugin.yml") { expand(props) }
     }
 }
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+}
