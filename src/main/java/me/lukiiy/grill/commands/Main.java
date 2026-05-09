@@ -1,11 +1,12 @@
-package me.lukiiy.grill;
+package me.lukiiy.grill.commands;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import me.lukiiy.grill.Grill;
 import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.Nullable;
 
-public class Cmd implements BasicCommand {
+public class Main implements BasicCommand {
     @Override
     public void execute(CommandSourceStack commandSourceStack, String[] args) {
         if (args.length == 0) {
