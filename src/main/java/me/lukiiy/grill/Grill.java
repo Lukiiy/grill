@@ -1,6 +1,7 @@
 package me.lukiiy.grill;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Grill extends JavaPlugin {
@@ -10,7 +11,11 @@ public final class Grill extends JavaPlugin {
     public void onEnable() {
         setupConfig();
 
-        getServer().getPluginManager().registerEvents(new Listen(), this);
+        PluginManager pluginManager = getServer().getPluginManager();
+
+        pluginManager.registerEvents(new Listen(), this);
+        pluginManager.registerEvents(new Oppe(), this);
+        
         setupDiscordWebhook();
 
         if (discordHook != null) discordHook.sendMessage(getConfig().getString("dcWebhook.start"));
