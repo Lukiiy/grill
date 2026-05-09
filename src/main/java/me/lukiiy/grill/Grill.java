@@ -1,6 +1,7 @@
 package me.lukiiy.grill;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import me.lukiiy.grill.commands.Main;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,13 +16,13 @@ public final class Grill extends JavaPlugin {
 
         pluginManager.registerEvents(new Listen(), this);
         pluginManager.registerEvents(new Oppe(), this);
-        
+
         setupDiscordWebhook();
 
         if (discordHook != null) discordHook.sendMessage(getConfig().getString("dcWebhook.start"));
 
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (event) -> {
-            event.registrar().register("grill", "Recarrega Grill", new Cmd());
+            event.registrar().register("grill", "Recarrega Grill", new Main());
         });
     }
 
