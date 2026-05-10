@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 public class VillagerStuff implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void villagerDmg(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Villager villager) || villager.getWorld().getDifficulty() != Difficulty.HARD || e.getFinalDamage() < villager.getHealth()) return;
+        if (!(e.getEntity() instanceof Villager villager) || villager.getWorld().getDifficulty() != Difficulty.HARD || e.getFinalDamage() <= villager.getHealth()) return;
 
         e.setCancelled(true);
 
