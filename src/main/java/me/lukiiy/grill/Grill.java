@@ -17,6 +17,7 @@ public final class Grill extends JavaPlugin {
 
         pluginManager.registerEvents(new Listen(), this);
         pluginManager.registerEvents(new Oppe(), this);
+        pluginManager.registerEvents(new VillagerStuff(), this);
 
         setupDiscordWebhook();
 
