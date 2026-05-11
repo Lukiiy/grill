@@ -18,6 +18,5 @@ public class Playtime implements BasicCommand {
         int hours = player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 72000;
 
         player.sendMessage(Component.text("Tempo de jogo: " + Math.round(hours) + " horas").color(TextColor.color(0x7EAEFF)));
-        return;
     }
 }
