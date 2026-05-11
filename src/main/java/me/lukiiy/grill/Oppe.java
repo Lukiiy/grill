@@ -40,7 +40,7 @@ public class Oppe implements Listener {
             entity.setPersistent(false);
             entity.setRemoveWhenFarAway(true);
 
-            entity.getScheduler().runDelayed(Grill.getInstance(), (t) -> {
+            entity.getScheduler().runDelayed(Grill.getInstance(), (_) -> {
                 if (!entity.isValid()) return;
 
                 boolean active = false;
@@ -53,10 +53,9 @@ public class Oppe implements Listener {
                     break;
                 }
 
-                entity.setAI(active);
                 entity.setAware(active);
                 entity.setJumping(active);
-            }, null, 1L);
+            }, null, 30L); // 1.5s
         }
     }
 
@@ -66,7 +65,7 @@ public class Oppe implements Listener {
 
         if (entity.getSpawnCategory() != SpawnCategory.MONSTER) return;
 
-        entity.getScheduler().runDelayed(Grill.getInstance(), (t) -> {
+        entity.getScheduler().runDelayed(Grill.getInstance(), (_) -> {
             if (entity.isPersistent()) entityItemPersistent.add(entity.getUniqueId());
         }, null, 2L);
     }
