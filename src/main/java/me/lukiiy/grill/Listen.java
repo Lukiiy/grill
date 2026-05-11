@@ -27,7 +27,7 @@ public class Listen implements Listener {
         player.sendMessage(MiniMessage.miniMessage().deserialize(Grill.getInstance().getConfig().getString("welcomeMsg", "")));
 
         AttributeInstance waypointTransmit = player.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
-        if (waypointTransmit != null) waypointTransmit.setBaseValue(192);
+        if (waypointTransmit != null) waypointTransmit.setBaseValue(256);
     }
 
     @EventHandler
