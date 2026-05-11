@@ -7,3 +7,8 @@ dcWebhook:
   join: "%p entrou no servidor."
   leave: "%p saiu do servidor."
 welcomeMsg: "<rainbow>Seja bem vindo(a) ao servidor!</rainbow>"
+bedMsgs: [
+  "%p foi para a cama.",
+  "%p está confortável em sua cama.",
+  "%p foi dormir."
+]

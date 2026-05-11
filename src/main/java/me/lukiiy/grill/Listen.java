@@ -3,16 +3,22 @@ package me.lukiiy.grill;
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Listen implements Listener {
     private final ChatRenderer chatRenderer = new GrillChatRenderer();
@@ -59,5 +65,15 @@ public class Listen implements Listener {
     @EventHandler
     public void chat(AsyncChatEvent e) {
         e.renderer(chatRenderer);
+    }
+
+    @EventHandler
+    public void bed(PlayerBedEnterEvent e) {
+        List<String> messages = Grill.getInstance().getConfig().getStringList("bedMsgs");
+        if (messages.isEmpty()) return;
+
+        String msg = messages.get(ThreadLocalRandom.current().nextInt(messages.size())).replace("%p", MiniMessage.miniMessage().serialize(e.getPlayer().displayName()));
+
+        Bukkit.getServer().broadcast(MiniMessage.miniMessage().deserialize(msg).color(NamedTextColor.YELLOW));
     }
 }
