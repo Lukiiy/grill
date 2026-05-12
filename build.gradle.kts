@@ -10,10 +10,12 @@ description = "agora sim."
 
 repositories {
     mavenCentral()
+    maven("https://repo.opencollab.dev/main/")
 }
 
 dependencies {
     paperweight.paperDevBundle("26.1.2.build.+")
+    compileOnly("org.geysermc.geyser:api:2.9.5-SNAPSHOT")
 }
 
 tasks {
