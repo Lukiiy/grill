@@ -9,6 +9,7 @@ import net.kyori.adventure.text.object.ObjectContents;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.geysermc.geyser.api.GeyserApi;
 
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public final class GrillChatRenderer implements ChatRenderer {
     public Component render(Player source, Component sourceDisplayName, Component message, Audience viewer) {
         Component displayName = sourceDisplayName;
 
-        if (viewer instanceof Player) displayName = Component.empty().append(Component.object(ObjectContents.playerHead(source.getPlayerProfile()))).append(Component.text(" ")).append(sourceDisplayName);
+        if (viewer instanceof Player target && !GeyserApi.api().isBedrockPlayer(target.getUniqueId())) displayName = Component.empty().append(Component.object(ObjectContents.playerHead(source.getPlayerProfile()))).append(Component.text(" ")).append(sourceDisplayName);
 
         return Component.translatable("chat.type.text", displayName, decorateMentions(message));
     }
