@@ -24,7 +24,7 @@ public class VillagerStuff implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void shareBestRep(PlayerInteractEntityEvent e) { // WIP? - Compartilha a melhor reputação positiva existente para quem interagiu
+    public void shareBestRep(PlayerInteractEntityEvent e) { // Compartilha a melhor reputação positiva existente para quem interagiu
         if (!(e.getRightClicked() instanceof Villager villager)) return;
 
         Player player = e.getPlayer();
