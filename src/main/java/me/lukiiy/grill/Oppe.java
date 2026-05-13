@@ -83,12 +83,16 @@ public class Oppe implements Listener {
 
     @EventHandler
     public void join(PlayerJoinEvent e) {
-        Bukkit.getScheduler().runTaskLater(Grill.getInstance(), () -> adjustRenderDist(e.getPlayer()), 10L);
+        Player p = e.getPlayer();
+
+        p.getScheduler().runDelayed(Grill.getInstance(), (_) -> adjustRenderDist(p), null, 10L);
     }
 
     @EventHandler
     public void worldChange(PlayerChangedWorldEvent e) {
-        Bukkit.getScheduler().runTaskLater(Grill.getInstance(), () -> adjustRenderDist(e.getPlayer()), 10L);
+        Player p = e.getPlayer();
+
+        p.getScheduler().runDelayed(Grill.getInstance(), (_) -> adjustRenderDist(p), null, 10L);
     }
 
     private void adjustRenderDist(Player p) {
