@@ -1,6 +1,9 @@
 package me.lukiiy.grill;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
+import io.papermc.paper.block.bed.BedEnterAction;
+import io.papermc.paper.block.bed.BedEnterProblem;
+import io.papermc.paper.block.bed.BedRuleResult;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -69,8 +72,10 @@ public class Listen implements Listener {
 
     @EventHandler
     public void bed(PlayerBedEnterEvent e) {
+        BedEnterAction action = e.enterAction();
         List<String> messages = Grill.getInstance().getConfig().getStringList("bedMsgs");
-        if (messages.isEmpty()) return;
+
+        if (messages.isEmpty() || action.problem() != null || e.enterAction().canSleep() != BedRuleResult.ALLOWED) return;
 
         String msg = messages.get(ThreadLocalRandom.current().nextInt(messages.size())).replace("%p", MiniMessage.miniMessage().serialize(e.getPlayer().displayName()));
 
