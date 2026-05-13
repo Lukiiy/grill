@@ -7,3 +7,10 @@ api-version: '26.1.2'
 load: POSTWORLD
 
 authors: [ Lukiiy ]
+folia-supported: true
+
+dependencies:
+  server:
+    Geyser-Spigot:
+      load: AFTER
+      required: true
