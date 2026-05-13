@@ -16,6 +16,7 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("26.1.2.build.+")
     compileOnly("org.geysermc.geyser:api:2.9.5-SNAPSHOT")
+    implementation(files("lib/WayTrick-1.0-26.1.jar"))
 }
 
 tasks {
