@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+// O mini sistema que gerencia o webhook do Discord.
 public class DiscordHook {
     private static final String WEBHOOK_BASE = "https://discord.com/api/webhooks/";
 
@@ -14,6 +15,7 @@ public class DiscordHook {
     public DiscordHook(String id, String token) {
         this.webhookURL = URI.create(WEBHOOK_BASE + id + "/" + token);
 
+        // Check de validação deles
         try {
             HttpResponse<String> response = client.send(HttpRequest.newBuilder().uri(webhookURL).GET().build(), HttpResponse.BodyHandlers.ofString());
 
@@ -23,12 +25,14 @@ public class DiscordHook {
         }
     }
 
+    // Enviar mensagens simples
     public void sendMessage(String message) {
         if (message == null || message.isBlank()) return;
 
         sendWebhook("{\"content\":\"" + escapeJson(message) + "\"}", message);
     }
 
+    // Enviar embeds
     public void sendSimpleEmbed(String title, String message) {
         if (title == null || title.isBlank() || message == null || message.isBlank()) return;
 
@@ -40,6 +44,7 @@ public class DiscordHook {
         sendWebhook(json, title + ": " + message);
     }
 
+    // Manda qualquer dado ao webhook
     private void sendWebhook(String json, String logMsg) {
         HttpRequest request = HttpRequest.newBuilder().uri(webhookURL)
                 .header("Content-Type", "application/json")
@@ -55,6 +60,7 @@ public class DiscordHook {
         }
     }
 
+    // Escapa caracteres especiais para o formato JSON
     private String escapeJson(String input) {
         return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
     }
