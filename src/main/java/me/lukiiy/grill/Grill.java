@@ -9,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Grill extends JavaPlugin {
     private DiscordHook discordHook;
 
+    public static final Component COMMAND_ERR_NONPLAYER = Component.text("Apenas jogadores podem utilizar esse comando!").color(NamedTextColor.RED);
+
     @Override
     public void onEnable() {
         setupConfig();
