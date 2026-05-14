@@ -32,7 +32,7 @@ public final class Grill extends JavaPlugin {
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (e) -> {
             e.registrar().register("grill", "Recarrega Grill", new Main());
             e.registrar().register("playtime", "Mostra seu tempo de jogatina", new Playtime());
-            e.registrar().register("pointcolor", "Muda a cor do seu Waypoint!", new WaypointColor());
+            e.registrar().register("waypointcolor", "Muda a cor do seu Waypoint!", new WaypointColor());
         });
     }
 
