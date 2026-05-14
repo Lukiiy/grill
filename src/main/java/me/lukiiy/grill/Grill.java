@@ -3,6 +3,9 @@ package me.lukiiy.grill;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import me.lukiiy.grill.commands.Main;
 import me.lukiiy.grill.commands.Playtime;
+import me.lukiiy.grill.commands.WaypointColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,9 +28,10 @@ public final class Grill extends JavaPlugin {
 
         if (discordHook != null) discordHook.sendMessage(getConfig().getString("dcWebhook.start"));
 
-        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (event) -> {
-            event.registrar().register("grill", "Recarrega Grill", new Main());
-            event.registrar().register("playtime", "Mostra seu tempo de jogatina", new Playtime());
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, (e) -> {
+            e.registrar().register("grill", "Recarrega Grill", new Main());
+            e.registrar().register("playtime", "Mostra seu tempo de jogatina", new Playtime());
+            e.registrar().register("pointcolor", "Muda a cor do seu Waypoint!", new WaypointColor());
         });
     }
 
