@@ -18,6 +18,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.geysermc.geyser.api.GeyserApi;
 
@@ -50,6 +51,7 @@ public class CoolCompass implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void interaction(PlayerInteractEvent e) {
+        if (e.getHand() != EquipmentSlot.HAND) return;
         if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (!isCompass(e.getItem())) return;
 
@@ -112,7 +114,7 @@ public class CoolCompass implements Listener {
         locator.trackTarget(player, icon, (_, _) -> new Vec3(target.getX(), target.getY(), target.getZ()));
 
         String label = mode == Mode.SPAWN ? "Spawn" : "Spawn do Mundo";
-        String coords = GeyserApi.api().isBedrockPlayer(player.getUniqueId()) ? "" : "   " + target.getBlockX() + " " + target.getBlockY() + " " + target.getBlockZ();
+        String coords = GeyserApi.api().isBedrockPlayer(player.getUniqueId()) ? "" : " = " + target.getBlockX() + " " + target.getBlockZ();
 
         player.sendActionBar(Component.text(label + coords));
     }
