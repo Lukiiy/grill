@@ -2,7 +2,6 @@ package me.lukiiy.grill;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import io.papermc.paper.block.bed.BedEnterAction;
-import io.papermc.paper.block.bed.BedEnterProblem;
 import io.papermc.paper.block.bed.BedRuleResult;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -47,7 +46,7 @@ public class Listen implements Listener {
     }
 
     @EventHandler
-    public void respawn(PlayerPostRespawnEvent e) {
+    public void respawn(PlayerPostRespawnEvent e) { // Mostra uma mensagem no chat que indica onde você morreu.
         Player p = e.getPlayer();
         Location loc = p.getLastDeathLocation();
         if (loc == null) return;
@@ -71,7 +70,7 @@ public class Listen implements Listener {
     }
 
     @EventHandler
-    public void bed(PlayerBedEnterEvent e) {
+    public void bed(PlayerBedEnterEvent e) { // Anuncia uma mensagem aleatória de uma lista
         BedEnterAction action = e.enterAction();
         List<String> messages = Grill.getInstance().getConfig().getStringList("bedMsgs");
 
