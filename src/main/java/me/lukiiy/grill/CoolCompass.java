@@ -1,125 +1,131 @@
 package me.lukiiy.grill;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import me.lukiiy.wayTrick.WayTrick;
 import net.kyori.adventure.text.Component;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.waypoints.Waypoint;
-import net.minecraft.world.waypoints.WaypointStyleAssets;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.geysermc.geyser.api.GeyserApi;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 import java.util.*;
 
 public class CoolCompass implements Listener {
-    private final Map<UUID, Mode> modes = new HashMap<>();
-    private final Map<UUID, WayTrick> locators = new HashMap<>();
-    private final Map<UUID, ScheduledTask> tasks = new HashMap<>();
+    private final Map<UUID, Session> sessions = new HashMap<>();
 
-    enum Mode {
-        SPAWN,
-        WORLD
+    @EventHandler
+    public void interact(PlayerInteractEvent e) {
+        Action a = e.getAction();
+        if (a != Action.RIGHT_CLICK_BLOCK) return;
+
+        Player p = e.getPlayer();
+        if (!compassHeld(p)) return;
+
+        e.setCancelled(true);
+
+        Session session = sessions.get(p.getUniqueId());
+
+        if (session == null) open(p); else session.cycle(p);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void heldChange(PlayerItemHeldEvent e) {
-        Player player = e.getPlayer();
+    @EventHandler(ignoreCancelled = true)
+    public void slotChange(PlayerItemHeldEvent e) {
+        e.getPlayer().getScheduler().run(Grill.getInstance(), _ -> check(e.getPlayer()), null);
+    }
 
-        if (isCompass(player.getInventory().getItem(e.getNewSlot()))) activate(player); else deactivate(player);
+    @EventHandler
+    public void itemSwap(PlayerSwapHandItemsEvent e) {
+        e.getPlayer().getScheduler().run(Grill.getInstance(), _ -> check(e.getPlayer()), null);
     }
 
     @EventHandler
     public void quit(PlayerQuitEvent e) {
-        Player player = e.getPlayer();
-
-        deactivate(player);
-        modes.remove(player.getUniqueId());
+        close(e.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void interaction(PlayerInteractEvent e) {
-        if (e.getHand() != EquipmentSlot.HAND) return;
-        if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (!isCompass(e.getItem())) return;
+    private void open(Player p) {
+        CompassMode[] mode = { CompassMode.SPAWN };
 
-        e.setUseInteractedBlock(Event.Result.DENY);
+        p.setCompassTarget(resolve(p, mode[0]));
 
-        Player player = e.getPlayer();
-        UUID uuid = player.getUniqueId();
-        Mode next = modes.getOrDefault(uuid, Mode.SPAWN) == Mode.SPAWN ? Mode.WORLD : Mode.SPAWN;
+        ScheduledTask task = p.getScheduler().runAtFixedRate(Grill.getInstance(), _ -> {
+            if (!compassHeld(p)) {
+                close(p);
+                return;
+            }
 
-        modes.put(uuid, next);
-        updateTarget(player, next);
+            Session session = sessions.get(p.getUniqueId());
+            if (session == null) return;
+
+            p.setCompassTarget(resolve(p, session.mode[0]));
+            p.sendActionBar(bar(p, session.mode[0]));
+        }, null, 1L, 20L);
+
+        sessions.put(p.getUniqueId(), new Session(task, mode));
+        p.sendActionBar(bar(p, mode[0]));
     }
 
-    private void activate(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (locators.containsKey(uuid)) return;
+    private void close(Player p) {
+        Session session = sessions.remove(p.getUniqueId());
+        if (session == null) return;
 
-        WayTrick locator = new WayTrick();
-
-        locator.addViewer(player);
-        locators.put(uuid, locator);
-
-        ScheduledTask task = player.getScheduler().runAtFixedRate(Grill.getInstance(), _ -> locator.updateAll(), () -> deactivate(player), 1L, 1L);
-
-        tasks.put(uuid, task);
-        updateTarget(player, modes.getOrDefault(uuid, Mode.SPAWN));
+        session.task.cancel();
+        p.sendActionBar(Component.empty());
     }
 
-    private void deactivate(Player player) {
-        UUID uuid = player.getUniqueId();
-        WayTrick locator = locators.remove(uuid);
-        if (locator == null) return;
-
-        locator.removeViewer(player);
-
-        ScheduledTask task = tasks.remove(uuid);
-        if (task != null) task.cancel();
+    private void check(Player p) {
+        if (sessions.containsKey(p.getUniqueId()) && !compassHeld(p)) close(p);
     }
 
-    private void updateTarget(Player player, Mode mode) {
-        Location target = switch (mode) {
-            case SPAWN -> player.getRespawnLocation();
-            case WORLD -> player.getWorld().getEnvironment() == World.Environment.NORMAL ? player.getWorld().getSpawnLocation() : null;
+    private boolean compassHeld(Player p) {
+        return p.getInventory().getItemInMainHand().getType() == Material.COMPASS || p.getInventory().getItemInOffHand().getType() == Material.COMPASS;
+    }
+
+    private static Location resolve(Player p, CompassMode mode) {
+        return switch (mode) {
+            case SPAWN -> {
+                Location b = p.getRespawnLocation();
+
+                yield b != null ? b : p.getWorld().getSpawnLocation();
+            }
+
+            case WORLD_SPAWN -> p.getWorld().getSpawnLocation();
         };
+    }
 
-        if (target == null) {
-            player.sendActionBar(Component.text("Localização não encontrada."));
-            return;
+    private static Component bar(Player p, CompassMode mode) {
+        Location from = p.getLocation();
+        Location to = resolve(p, mode);
+
+        double dx = from.getX() - to.getX();
+        double dz = from.getZ() - to.getZ();
+
+        return Component.text(mode.label + " - " + (int) Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2)) + " blocos");
+    }
+
+    private record Session(ScheduledTask task, CompassMode[] mode) {
+
+        void cycle(Player p) {
+                mode[0] = (mode[0] == CompassMode.SPAWN) ? CompassMode.WORLD_SPAWN : CompassMode.SPAWN;
+
+                p.setCompassTarget(resolve(p, mode[0]));
+                p.sendActionBar(bar(p, mode[0]));
+            }
         }
 
-        player.setCompassTarget(target);
+    private enum CompassMode {
+        SPAWN("Seu spawn"),
+        WORLD_SPAWN("Spawn mundial");
 
-        WayTrick locator = locators.get(player.getUniqueId());
-        if (locator == null) return;
+        final String label;
 
-        Waypoint.Icon icon = new Waypoint.Icon();
-
-        icon.color = Optional.of(0xFFF);
-        icon.style = WaypointStyleAssets.BOWTIE;
-        locator.trackTarget(player, icon, (_, _) -> new Vec3(target.getX(), target.getY(), target.getZ()));
-
-        String label = mode == Mode.SPAWN ? "Spawn" : "Spawn do Mundo";
-        String coords = GeyserApi.api().isBedrockPlayer(player.getUniqueId()) ? "" : " = " + target.getBlockX() + " " + target.getBlockZ();
-
-        player.sendActionBar(Component.text(label + coords));
-    }
-
-    private static boolean isCompass(ItemStack item) {
-        return item != null && item.getType() == Material.COMPASS;
+        CompassMode(String l) {
+            label = l;
+        }
     }
 }
