@@ -5,6 +5,7 @@ import io.papermc.paper.block.bed.BedEnterAction;
 import io.papermc.paper.block.bed.BedRuleResult;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.lukiiy.grill.utils.Debouncer;
 import me.lukiiy.grill.utils.GrillChatRenderer;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -21,17 +22,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Listen implements Listener {
     private final ChatRenderer chatRenderer = new GrillChatRenderer();
+    private final Debouncer<UUID> hookDebouncer = new Debouncer<>();
 
     @EventHandler
     public void join(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         DiscordHook hook = Grill.getInstance().getDiscordHook();
 
-        if (hook != null) hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.join", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(e.getPlayer().displayName())));
+        if (hook != null) hookDebouncer.submit(player.getUniqueId(), () -> hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.join", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(player.displayName()))));
 
         player.sendMessage(MiniMessage.miniMessage().deserialize(Grill.getInstance().getConfig().getString("welcomeMsg", "")));
 
@@ -41,9 +44,10 @@ public class Listen implements Listener {
 
     @EventHandler
     public void quit(PlayerQuitEvent e) {
+        Player player = e.getPlayer();
         DiscordHook hook = Grill.getInstance().getDiscordHook();
 
-        if (hook != null) hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.leave", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(e.getPlayer().displayName())));
+        if (hook != null) hookDebouncer.submit(player.getUniqueId(), () -> hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.leave", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(player.displayName()))));
     }
 
     @EventHandler
