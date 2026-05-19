@@ -5,6 +5,7 @@ import io.papermc.paper.block.bed.BedEnterAction;
 import io.papermc.paper.block.bed.BedRuleResult;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.lukiiy.grill.utils.GrillChatRenderer;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;

@@ -1,9 +1,8 @@
-package me.lukiiy.grill;
+package me.lukiiy.grill.utils;
 
 import io.papermc.paper.chat.ChatRenderer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.object.ObjectContents;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
