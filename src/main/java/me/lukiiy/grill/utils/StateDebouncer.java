@@ -5,6 +5,7 @@ import me.lukiiy.grill.Grill;
 import org.bukkit.Bukkit;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class StateDebouncer<K, S> {
@@ -17,7 +18,6 @@ public final class StateDebouncer<K, S> {
 
     public void submit(K key, S state, Runnable task) {
         Entry<S> entry = entries.compute(key, (_, old) -> {
-            if (old != null && old.state != state) return null;
             if (old == null) old = new Entry<>();
 
             old.state = state;
@@ -27,8 +27,6 @@ public final class StateDebouncer<K, S> {
             return old;
         });
 
-        if (entry == null) return;
-
         long snapshot = entry.version;
 
         Bukkit.getGlobalRegionScheduler().runDelayed(Grill.getInstance(), _ -> flush(key, state, snapshot), delay);
@@ -37,11 +35,7 @@ public final class StateDebouncer<K, S> {
     private void flush(K key, S state, long snapshot) {
         Entry<S> entry = entries.get(key);
 
-        if (entry == null) return;
-        if (entry.state != state) return;
-        if (entry.version != snapshot) return;
-
-        if (!entries.remove(key, entry)) return;
+        if (entry == null || !Objects.equals(entry.state, state) || entry.version != snapshot || !entries.remove(key, entry)) return;
 
         Bukkit.getAsyncScheduler().runNow(Grill.getInstance(), _ -> {
             try {

@@ -38,7 +38,9 @@ public class Listen implements Listener {
         Player player = e.getPlayer();
         DiscordHook hook = Grill.getInstance().getDiscordHook();
 
-        if (hook != null) hookDebouncer.submit(player.getUniqueId(), true, () -> hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.join", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(player.displayName()))));
+        hookDebouncer.submit(player.getUniqueId(), true, () -> {
+            if (hook != null) hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.join", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(player.displayName())));
+        });
 
         player.sendMessage(MiniMessage.miniMessage().deserialize(Grill.getInstance().getConfig().getString("welcomeMsg", "")));
 
@@ -51,7 +53,9 @@ public class Listen implements Listener {
         Player player = e.getPlayer();
         DiscordHook hook = Grill.getInstance().getDiscordHook();
 
-        if (hook != null) hookDebouncer.submit(player.getUniqueId(), false, () -> hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.leave", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(player.displayName()))));
+        hookDebouncer.submit(player.getUniqueId(), false, () -> {
+            if (hook != null) hook.sendMessage(Grill.getInstance().getConfig().getString("dcWebhook.leave", "").replace("%p", PlainTextComponentSerializer.plainText().serialize(player.displayName())));
+        });
     }
 
     @EventHandler
@@ -88,5 +92,15 @@ public class Listen implements Listener {
         String msg = messages.get(ThreadLocalRandom.current().nextInt(messages.size())).replace("%p", MiniMessage.miniMessage().serialize(e.getPlayer().displayName()));
 
         Bukkit.getServer().broadcast(MiniMessage.miniMessage().deserialize(msg).color(NamedTextColor.YELLOW));
+    }
+
+    @EventHandler
+    public void spawn(CreatureSpawnEvent e) {
+        if (!(e.getEntity() instanceof Axolotl axolotl) || axolotl.getVariant() != Axolotl.Variant.BLUE) return;
+
+        Player p = Bukkit.getPlayerExact("SmartMrSmile");
+        if (p == null) return;
+
+        p.sendMessage(Component.text("Super Battle Golf was made by Aggro Crab"));
     }
 }
