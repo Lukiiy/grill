@@ -30,8 +30,10 @@ public class EntityVariants implements Listener {
     private static final NamespacedKey ATTRIBUTE_MODIFIER_KEY = new NamespacedKey(Grill.getInstance(), "mod");
 
     private final List<MobVariant<?>> variants = List.of(
+            // Charged creeper abaixo da camada 0! 15%
             new MobVariant<>(Creeper.class, (b) -> b.getLocation().y() < 0, .15, (creeper, _) -> creeper.setPowered(true)),
 
+            // Zumbis um pouco mais rápidos acima da camada 64! 10%
             new MobVariant<>(Zombie.class, (b) -> b.getLocation().y() > 64, .10,
                     (zombie, _) -> {
                         AttributeInstance instance = zombie.getAttribute(Attribute.MOVEMENT_SPEED);
@@ -40,6 +42,7 @@ public class EntityVariants implements Listener {
                     }
             ),
 
+            // Esqueleto sem arco. 10%
             new MobVariant<>(Skeleton.class, (_) -> true, .10, (skeleton, _) -> skeleton.getEquipment().setItemInMainHand(new ItemStack(Material.AIR)))
     );
 
